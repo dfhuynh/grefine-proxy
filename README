@@ -1,0 +1,38 @@
+This is a nodejs server for proxying a Google Refine instance in a read-only
+manner: Google Refine projects can only be viewed and not edited through this
+proxy. This proxy also implements an entry point for using the Google Refine
+instance to apply an operation script to a data file, as well as exposes
+a web page for uploading both files to that entry point.
+
+
+INSTRUCTIONS
+============
+
+Some of these steps might not be necessary if you have already used node.js
+previously.
+
+Step 1. You'd need at least nodejs 0.4.5. The installing instructions are here
+    https://github.com/joyent/node/wiki/Installation
+
+Step 2. You need to install npm (nodejs package manager)
+    curl http://npmjs.org/install.sh | sh
+    export NODE_PATH="/usr/local/lib/node"
+according to
+    http://shapeshed.com/journal/setting-up-nodejs-and-npm-on-mac-osx/
+
+Step 3. Install a few modules.
+  a. Use npm to install the module "node-static"
+       npm install node-static
+  b. Download from https://github.com/felixge/node-formidable and then use npm
+     to install it, e.g.,
+       npm install ~/Downloads/felixge-node-formidable-v0.9.11-2-g5d98e9c.tar.gz
+
+Step 4. Run this proxy
+    node proxy.js
+
+By default, Google Refine is proxied at
+    http://localhost:8080/
+The transformer UI is at
+    http://localhost:8080/transformer
+
+

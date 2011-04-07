@@ -1,0 +1,41 @@
+<html>
+<head>
+  <title>Google Refine Transformer</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png"> 
+
+  <script type="text/javascript" src="/externals/jquery-1.4.2.min.js"></script> 
+  <script type="text/javascript" src="/externals/jquery-ui/jquery-ui-1.8.custom.min.js"></script> 
+  <script type="text/javascript" src="/externals/date.js"></script> 
+  <script type="text/javascript" src="/scripts/util/string.js"></script> 
+  <script type="text/javascript" src="/scripts/util/dom.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="/externals/jquery-ui/css/ui-lightness/jquery-ui-1.8.custom.css" />
+  <link type="text/css" rel="stylesheet" href="/styles/jquery-ui-overrides.less" />
+  <link type="text/css" rel="stylesheet" href="/styles/common.less" />
+  <link type="text/css" rel="stylesheet" href="/styles/pure.css" />
+
+  <link type="text/css" rel="stylesheet" href="styles.css" />
+</head>
+<body><div id="body">
+  <h1>Google Refine Transformer</h1>
+  <form id="the-form" enctype="multipart/form-data" accept-charset="UTF-8" action="/transform" method="POST"><div class="grid-layout layout-normal">
+    <table>
+      <tr>
+        <td>Data File:</td>
+        <td><input type="file" name="data-file" /><br/>
+          CSV, TSV, Excel, ...
+        </td>
+      </tr>
+      <tr>
+        <td>Operation JSON File:</td>
+        <td><input type="file" name="operation-file" /></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><button type="submit" class="button button-primary">Transform</button></td>
+      </tr>
+    </table>
+  </div></form>
+</div></body>
+</html>
+
