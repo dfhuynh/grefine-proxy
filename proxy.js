@@ -13,7 +13,7 @@ var proxyConfig = {
 };
 var refineConfig = {
   host: '127.0.0.1',
-  port: 3333
+  port: 8081
 };
 
 var events = require('events'),
@@ -103,21 +103,44 @@ var shouldPassRequestThru = function(path) {
   }
 };
 
+var refineConnection = null;
+
+var rawCreatePassThruRequest = function(method, url, headers) {
+  if (refineConnection == null) {
+    refineConnection = http.createClient(refineConfig.port, refineConfig.host);
+  }
+  return refineConnection.request(method, url, headers);
+};
+
+var createPassThruRequest = function(method, url, headers) {
+  // Try twice but ignore exceptions if we don't succeed.
+  for (var i = 0; i < 2; i++) {
+    try {
+      return rawCreatePassThruRequest(method, url, headers);
+    } catch (e) {
+      refineConnection = null;
+      // Ignore
+    }
+  }
+  // Try the third time and if it fails, let the exception bubbles up.
+  return rawCreatePassThruRequest(method, url, headers);
+};
+
 var passRequestThru = function (proxyReq, proxyRes) {
-  var refineConnection = http.createClient(refineConfig.port, refineConfig.host);
-  var refineReq = refineConnection.request(
+  var refineReq = createPassThruRequest(
     proxyReq.method,
     proxyReq.url,
     proxyReq.headers
   );
-
+  
   refineReq.on('response', function(refineRes) {
     proxyRes.writeHead(refineRes.statusCode, refineRes.headers);
     refineRes.on('data', function(chunk) {
-      proxyRes.write(chunk, 'binary');
+      proxyRes.write(chunk, 'utf-8');
     });
     refineRes.on('end', function() {
       proxyRes.end();
+      log('Proxied ' + proxyReq.method + ': ' + proxyReq.url);
     });
   });
 
@@ -421,6 +444,7 @@ http.createServer(function (proxyReq, proxyRes) {
   } else if (shouldPassRequestThru(path)) {
     passRequestThru(proxyReq, proxyRes);
   } else {
+    log('Blocked ' + proxyReq.method + ': ' + proxyReq.url);
     respondErrorText(proxyReq, proxyRes, 502, 'Unsupported request');
   }
 }).listen(proxyConfig.port, proxyConfig.host);
