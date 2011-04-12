@@ -71,7 +71,7 @@ var respondErrorText = function(request, response, statusCode, body) {
       jsonBody += ')';
     }
 
-    response.writeHead(statusCode, {
+    response.writeHead(200, {
       'Content-Type' : isJsonp ? 'text/javascript' : 'application/json',
       'Content-Length' : jsonBody.length
     });
