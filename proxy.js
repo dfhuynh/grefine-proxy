@@ -392,7 +392,7 @@ var doTransform = function(proxyReq, proxyRes) {
       var body = [
         'engine=' + escape('{"facets":[],"mode":"row-based"}'),
         'project=' + escape(projectID),
-        'format=' + params['format']
+        'format=' + params['format'] || 'tsv'
       ].join("&");
       
       var exportReq = createRefinePostRequest({
