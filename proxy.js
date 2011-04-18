@@ -293,6 +293,11 @@ var createProject = function(proxyReq, callback) {
       createProjectReq.partEnd();
     }
   });
+  form.addListener('field', function(name, value) {
+    if (name == 'format') {
+      params['format'] = value;
+    }
+  });
   form.addListener('end', function() {
     createProjectReq.endAll();
   });
@@ -387,7 +392,7 @@ var doTransform = function(proxyReq, proxyRes) {
       var body = [
         'engine=' + escape('{"facets":[],"mode":"row-based"}'),
         'project=' + escape(projectID),
-        'format=tsv'
+        'format=' + params['format']
       ].join("&");
       
       var exportReq = createRefinePostRequest({
