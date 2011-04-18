@@ -443,8 +443,8 @@ http.createServer(function (proxyReq, proxyRes) {
     proxyRes.end();
   } else if (startsWith(path, transformerEntryPoint + '/')) {
     staticServer.serve(proxyReq, proxyRes);
-  } else if (path == transformEntryPoint ||
-             startsWith(path, transformEntryPoint + '/')) {
+  } else if (proxyReq.method == 'POST' && (path == transformEntryPoint ||
+             startsWith(path, transformEntryPoint + '/'))) {
     doTransform(proxyReq, proxyRes);
   } else if (shouldPassRequestThru(path)) {
     passRequestThru(proxyReq, proxyRes);
