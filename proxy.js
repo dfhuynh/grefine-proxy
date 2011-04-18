@@ -247,6 +247,11 @@ var createRefineMultipartPostRequest = function(options, onResponse) {
 var createProject = function(proxyReq, callback) {
   var params = {};
   var operationChunks = [];
+  var dataChunks = [];
+
+  var filename = "";
+  var filetype = "";
+
 
   var projectName = 'transform-' + new Date().toString();
   var postParams = [
@@ -288,17 +293,34 @@ var createProject = function(proxyReq, callback) {
     if (field == 'operation-file') {
       readSync(file.path, function(data) { operationChunks.push(data); });
     } else if (field == 'data-file') {
-      createProjectReq.partBegin(file.type, 'project-file', file.filename);
-      readSync(file.path, function(data) { createProjectReq.partData(data); });
-      createProjectReq.partEnd();
+      filename = file.filename;
+      filetype = file.type;
+      readSync(file.path, function(data) { dataChunks.push(data); });
     }
   });
   form.addListener('field', function(name, value) {
-    if (name == 'format') {
-      params['format'] = value;
+    switch(name){
+      case "operations-string":
+        operationChunks.push(value);
+        break;
+      case "data-string":
+        dataChunks.push(value);
+        break;
+      case "data-filetype":
+        filename = value;
+        break;
+      case "data-filename":
+        filetype = value;
+        break;
+      default:
+        params[name] = value;
+        break;
     }
   });
   form.addListener('end', function() {
+    createProjectReq.partBegin(filetype, 'project-file', filename);
+    createProjectReq.partData(dataChunks.join(''))
+    createProjectReq.partEnd();
     createProjectReq.endAll();
   });
   form.parse(proxyReq);
