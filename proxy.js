@@ -8,12 +8,12 @@ var transformerEntryPoint = '/transformer';
 var transformEntryPoint = '/transform';
 
 var proxyConfig = {
-  host: "0.0.0.0",
+  host: "127.0.0.1",
   port: 8080
 };
 var refineConfig = {
   host: '127.0.0.1',
-  port: 8081
+  port: 3333
 };
 
 var events = require('events'),
@@ -327,7 +327,7 @@ var createProject = function(proxyReq, callback) {
 };
 
 var waitUntilIdle = function(projectID, callback) {
-  var poll = function() {console.log('poll');
+  var poll = function() {
     options = {
       host: refineConfig.host,
       port: refineConfig.port,
@@ -444,7 +444,7 @@ var doTransform = function(proxyReq, proxyRes) {
 };
 
 var staticServer = new nodestatic.Server('./content');
-staticServer.normalize = function(pathname) {
+staticServer.resolve = function(pathname) {
   pathname = pathname.substring(transformerEntryPoint.length);
   return path.normalize(path.join(this.root, pathname));
 };
