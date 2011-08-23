@@ -15,6 +15,34 @@
   <link type="text/css" rel="stylesheet" href="/styles/pure.css" />
 
   <link type="text/css" rel="stylesheet" href="styles.css" />
+  <script>
+    $(function() {
+      $('#transform-button').click(function(evt) {
+        var dataFiles = $('#data-file')[0].files;
+        var operationFiles = $('#operation-file')[0].files;
+        if (dataFiles.length == 0) {
+          alert('Please specify a data file.');
+        } else if (operationFiles.length == 0) {
+          alert('Please specify an operation file.');
+        } else {
+          var extension = '.' + $('#format-select')[0].value;
+          $('#the-form').attr(
+            'action',
+            '/transform/' +
+              dataFiles[0].fileName + '--' +
+              operationFiles[0].fileName + '.' +
+              new Date().getTime() +
+              extension
+          );
+          
+          // Let the event run through normally.
+          return;
+        }
+        evt.preventDefault();
+        return false;
+      });
+    });
+  </script>
 </head>
 <body><div id="body">
   <h1>Google Refine Transformer</h1>
@@ -22,18 +50,18 @@
     <table>
       <tr>
         <td>Data File:</td>
-        <td><input type="file" name="data-file" /><br/>
+        <td><input type="file" name="data-file" id="data-file" /><br/>
           CSV, TSV, Excel, ...
         </td>
       </tr>
       <tr>
         <td>Operation JSON File:</td>
-        <td><input type="file" name="operation-file" /></td>
+        <td><input type="file" name="operation-file" id="operation-file" /></td>
       </tr>
       <tr>
         <td>Output format:</td>
         <td>
-          <select name="format" />
+          <select name="format" id="format-select" />
             <option value="tsv">TSV</option>
             <option value="csv">CSV</option>
             <option value="html">HTML</option>
@@ -43,7 +71,7 @@
       </tr>
       <tr>
         <td></td>
-        <td><button type="submit" class="button button-primary">Transform</button></td>
+        <td><button type="submit" class="button button-primary" id="transform-button">Transform</button></td>
       </tr>
     </table>
   </div></form>

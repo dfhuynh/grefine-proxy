@@ -252,7 +252,6 @@ var createProject = function(proxyReq, callback) {
   var filename = "";
   var filetype = "";
 
-
   var projectName = 'transform-' + new Date().toString();
   var postParams = [
     'project-name=' + escape(projectName),
@@ -281,7 +280,9 @@ var createProject = function(proxyReq, callback) {
         callback(
           params,
           operationChunks.join(''),
-          projectID
+          projectID,
+          projectName,
+          filename
         );
       });
     }
@@ -367,7 +368,8 @@ var applyOperations = function(projectID, operationJson, callback) {
       chunks.push(chunk);
     });
     res.on('end', function() {
-      var result = JSON.parse(chunks.join(''));
+      var response = chunks.join('');
+      var result = JSON.parse(response);
       if (result.code == 'pending') {
         waitUntilIdle(projectID, callback);
       } else {
@@ -405,16 +407,17 @@ var deleteProject = function(projectID) {
 };
 
 var doTransform = function(proxyReq, proxyRes) {
-  createProject(proxyReq, function(params, operationJson, projectID) {
-    log('Created project ' + projectID);
+  createProject(proxyReq, function(params, operationJson, projectID, projectName, filename) {
+    log('Created project ' + projectID + ' named "' + projectName + '" from uploaded file named "' + filename + '"');
     
     applyOperations(projectID, operationJson, function() {
       log('Applied operations to project ' + projectID);
       
+      var desiredFormat = params['format'] || 'tsv';
       var body = [
         'engine=' + escape('{"facets":[],"mode":"row-based"}'),
         'project=' + escape(projectID),
-        'format=' + params['format'] || 'tsv'
+        'format=' + desiredFormat
       ].join("&");
       
       var exportReq = createRefinePostRequest({
